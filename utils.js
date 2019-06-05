@@ -24,7 +24,8 @@ module.exports = {
       /* can use an efficient single-quoted string */
       return "'" + string.replace(/'|(?:\\(?=[\\']|$))/g, '\\$&') + "'";
     }
-    return JSON.stringify(string).replace(/\$/g, '\\$'); // double-quoted string
+    // double-quoted string (but protect $ before possible variable names)
+    return JSON.stringify(string).replace(/\$(?=[{a-zA-Z_\x80-\xff])/g, '\\$');
   },
 
   clone: function(obj) {
