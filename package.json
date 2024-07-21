@@ -1,6 +1,6 @@
 {
-  "name": "js2php",
-  "version": "0.2.0",
+  "name": "beejs2php",
+  "version": "0.2.4",
   "description": "JavaScript to PHP transpiler.",
   "main": "index.js",
   "bin": "js2php",
@@ -25,6 +25,6 @@
   "scripts": {
     "test": "mocha ./test/suite.js"
   },
-  "author": "Endel Dreyer",
+  "author": "Original Author: Endel Dreyer, modified by: Nyola Mike",
   "license": "MIT"
 }
