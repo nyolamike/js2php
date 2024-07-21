@@ -48,7 +48,8 @@ module.exports = function(code, options) {
     if (inside) { outside += module.exports(inside, noptions); }
     return outside;
   }
-  var useConciseArrays = (options.conciseArrays === false) ? false : true;
+  // var useConciseArrays = (options.conciseArrays === false) ? false : true;
+  var useConciseArrays = true;
   var ast = espree.parse(code, {
     loc : true,
     range : true,
@@ -141,14 +142,14 @@ module.exports = function(code, options) {
   }
   Emitter.prototype.block = function(open, f, close) {
     var firstline = this.line;
-    this.emit(open); this.emit(' ');
+    this.emit(open); this.emit('');
     var checkpoint = this.buffer.length;
     this.incrIndent();
     f();
     if (this.line > firstline) {
       this.ensureNl();
     } else if (this.buffer.length !== checkpoint) {
-      this.emit(' ');
+      this.emit(''); //cbh
     } else {
       // no content in block => no space
       this.buffer = this.buffer.replace(/[\t ]+$/, '');
@@ -188,7 +189,7 @@ module.exports = function(code, options) {
           (utils.isType(startT, 'Punctuator') && startT.value === '(' &&
            utils.isType(endT, 'Punctuator') && endT.value === ')')
       ) {
-        this.emit('( ');
+        this.emit('(');
       }
     }
   };
@@ -693,8 +694,11 @@ module.exports = function(code, options) {
         } else {
           node.property.isMemberExpression = true;
           visit(node.object, node);
-          emitter.emit(accessor);
-          visit(node.property, node);
+          // emitter.emit(accessor);
+          // visit(node.property, node);
+          emitter.block('["', function() {
+            visit(node.property, node);
+          }, '"]');
         }
       }
 
@@ -702,9 +706,10 @@ module.exports = function(code, options) {
       node.type == "ArrowFunctionExpression") {
       var defaults = node.defaults || [];
 
-      emitter.emit("function ");
+      emitter.emit("function");
       if (node.id) {
         if (typeof node.id.name === 'string') {
+          emitter.emit(' ');
           emitter.emit(node.id.name);
         } else if (utils.isType(node.id.name, 'Identifier')) {
           // PHP doesn't support an identifier here, so suppress it.

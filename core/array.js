@@ -89,6 +89,26 @@ module.exports = {
     };
   },
 
+  concat: function(node) {
+    var args = utils.clone(node.parent.arguments);
+    // node.parent.arguments = false;
+    // scope.get(node).getDefinition(node.parent.callee.object);
+    args[0].suppressParens = true;
+
+
+    node.parent.arguments = false;
+    scope.get(node).getDefinition(node.parent.callee.object);
+
+    return {
+      type: 'CallExpression',
+      callee: {
+        type: 'Identifier',
+        name: 'array_merge',
+      },
+      arguments: [ node.parent.callee.object, args[0] ]
+    };
+  },
+
   join: function(node) {
     var args = utils.clone(node.parent.arguments);
     node.parent.arguments = false;
